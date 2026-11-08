@@ -3,9 +3,11 @@
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .entity import mertik_device_info
 from .mertikdatacoordinator import MertikDataCoordinator
 
 
@@ -16,12 +18,15 @@ async def async_setup_entry(
 ) -> None:
     """Set up Mertik switches from a config entry."""
     dataservice: MertikDataCoordinator = entry.runtime_data
+    device_info = mertik_device_info(entry)
 
     async_add_entities(
         [
-            MertikOnOffSwitchEntity(dataservice, entry.entry_id, entry.data["name"]),
+            MertikOnOffSwitchEntity(
+                dataservice, entry.entry_id, entry.data["name"], device_info
+            ),
             MertikAuxOnOffSwitchEntity(
-                dataservice, entry.entry_id, entry.data["name"] + " Aux"
+                dataservice, entry.entry_id, entry.data["name"] + " Aux", device_info
             ),
         ]
     )
@@ -31,13 +36,18 @@ class MertikOnOffSwitchEntity(CoordinatorEntity[MertikDataCoordinator], SwitchEn
     """Representation of a Mertik fireplace on/off switch."""
 
     def __init__(
-        self, dataservice: MertikDataCoordinator, entry_id: str, name: str
+        self,
+        dataservice: MertikDataCoordinator,
+        entry_id: str,
+        name: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the switch."""
         super().__init__(dataservice)
         self._dataservice = dataservice
         self._attr_name = name
         self._attr_unique_id = entry_id + "-OnOff"
+        self._attr_device_info = device_info
 
     @property
     def is_on(self) -> bool:
@@ -66,13 +76,18 @@ class MertikAuxOnOffSwitchEntity(
     """Representation of a Mertik auxiliary on/off switch."""
 
     def __init__(
-        self, dataservice: MertikDataCoordinator, entry_id: str, name: str
+        self,
+        dataservice: MertikDataCoordinator,
+        entry_id: str,
+        name: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the switch."""
         super().__init__(dataservice)
         self._dataservice = dataservice
         self._attr_name = name
         self._attr_unique_id = entry_id + "-AuxOnOff"
+        self._attr_device_info = device_info
 
     @property
     def is_on(self) -> bool:

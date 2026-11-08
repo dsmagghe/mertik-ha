@@ -31,6 +31,21 @@ class MertikDataCoordinator(DataUpdateCoordinator[None]):
         """Return true if the fireplace is on or igniting."""
         return self.mertik.is_on or self.mertik.is_igniting
 
+    @property
+    def is_igniting(self) -> bool:
+        """Return true while the fireplace is igniting."""
+        return self.mertik.is_igniting
+
+    @property
+    def is_shutting_down(self) -> bool:
+        """Return true while the fireplace is shutting down."""
+        return self.mertik.is_shutting_down
+
+    @property
+    def is_guard_flame_on(self) -> bool:
+        """Return true if the guard (pilot) flame is burning."""
+        return self.mertik.is_guard_flame_on
+
     def ignite_fireplace(self):
         """Ignite the fireplace."""
         self.mertik.ignite_fireplace()

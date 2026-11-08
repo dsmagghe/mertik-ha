@@ -4,9 +4,11 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .entity import mertik_device_info
 from .mertikdatacoordinator import MertikDataCoordinator
 
 
@@ -17,11 +19,12 @@ async def async_setup_entry(
 ) -> None:
     """Set up Mertik sensor entities from a config entry."""
     dataservice: MertikDataCoordinator = entry.runtime_data
+    device_info = mertik_device_info(entry)
 
     async_add_entities(
         [
             MertikAmbientTemperatureSensorEntity(
-                dataservice, entry.entry_id, entry.data["name"]
+                dataservice, entry.entry_id, entry.data["name"], device_info
             )
         ]
     )
@@ -36,13 +39,18 @@ class MertikAmbientTemperatureSensorEntity(
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
 
     def __init__(
-        self, dataservice: MertikDataCoordinator, entry_id: str, name: str
+        self,
+        dataservice: MertikDataCoordinator,
+        entry_id: str,
+        name: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the ambient temperature sensor."""
         super().__init__(dataservice)
         self._dataservice = dataservice
         self._attr_name = name + " Ambient Temperature"
         self._attr_unique_id = entry_id + "-AmbientTemperature"
+        self._attr_device_info = device_info
 
     @property
     def native_value(self) -> float:

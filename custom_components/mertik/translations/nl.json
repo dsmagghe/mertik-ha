@@ -1,0 +1,14 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "name": "Naam van de haard",
+          "host": "IP-adres van de wifimodule"
+        },
+        "description": "Geef de haard een naam en vul het IP-adres van de Mertik-wifimodule in.",
+        "title": "Mertik Maxitrol-haard"
+      }
+    }
+  }
+}

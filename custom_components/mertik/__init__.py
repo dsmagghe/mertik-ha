@@ -8,7 +8,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .mertik import Mertik
 from .mertikdatacoordinator import MertikDataCoordinator
 
-PLATFORMS = ["light", "number", "sensor", "switch"]
+PLATFORMS = ["binary_sensor", "light", "number", "sensor", "switch"]
 
 
 async def async_setup_entry(

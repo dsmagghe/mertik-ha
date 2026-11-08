@@ -3,9 +3,11 @@
 from homeassistant.components.light import ATTR_BRIGHTNESS, ColorMode, LightEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .entity import mertik_device_info
 from .mertikdatacoordinator import MertikDataCoordinator
 
 
@@ -16,9 +18,14 @@ async def async_setup_entry(
 ) -> None:
     """Set up Mertik light from a config entry."""
     dataservice: MertikDataCoordinator = entry.runtime_data
+    device_info = mertik_device_info(entry)
 
     async_add_entities(
-        [MertikLightEntity(dataservice, entry.entry_id, entry.data["name"])]
+        [
+            MertikLightEntity(
+                dataservice, entry.entry_id, entry.data["name"], device_info
+            )
+        ]
     )
 
 
@@ -29,13 +36,18 @@ class MertikLightEntity(CoordinatorEntity[MertikDataCoordinator], LightEntity):
     _attr_supported_color_modes = {ColorMode.BRIGHTNESS}
 
     def __init__(
-        self, dataservice: MertikDataCoordinator, entry_id: str, name: str
+        self,
+        dataservice: MertikDataCoordinator,
+        entry_id: str,
+        name: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the Mertik light entity."""
         super().__init__(dataservice)
         self._dataservice = dataservice
         self._attr_name = name + " Light"
         self._attr_unique_id = entry_id + "-Light"
+        self._attr_device_info = device_info
 
     @property
     def is_on(self) -> bool:

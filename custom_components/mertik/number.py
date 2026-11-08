@@ -3,9 +3,11 @@
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .entity import mertik_device_info
 from .mertikdatacoordinator import MertikDataCoordinator
 
 
@@ -16,9 +18,14 @@ async def async_setup_entry(
 ) -> None:
     """Set up Mertik number entities from a config entry."""
     dataservice: MertikDataCoordinator = entry.runtime_data
+    device_info = mertik_device_info(entry)
 
     async_add_entities(
-        [MertikFlameHeightEntity(dataservice, entry.entry_id, entry.data["name"])]
+        [
+            MertikFlameHeightEntity(
+                dataservice, entry.entry_id, entry.data["name"], device_info
+            )
+        ]
     )
 
 
@@ -26,7 +33,11 @@ class MertikFlameHeightEntity(CoordinatorEntity[MertikDataCoordinator], NumberEn
     """Representation of a Mertik flame height number entity."""
 
     def __init__(
-        self, dataservice: MertikDataCoordinator, entry_id: str, name: str
+        self,
+        dataservice: MertikDataCoordinator,
+        entry_id: str,
+        name: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the flame height entity."""
         super().__init__(dataservice)
@@ -35,6 +46,7 @@ class MertikFlameHeightEntity(CoordinatorEntity[MertikDataCoordinator], NumberEn
         self._attr_native_min_value = 1
         self._attr_native_max_value = 12
         self._attr_unique_id = entry_id + "-FlameHeight"
+        self._attr_device_info = device_info
 
     @property
     def native_value(self) -> float:
