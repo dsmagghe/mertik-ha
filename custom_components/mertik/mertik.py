@@ -13,6 +13,15 @@ PROCESS_STATUS_PREFIXES = ("303030300003", "030300000003")
 class Mertik:
     def __init__(self, ip):
         self.ip = ip
+        self.on = False
+        self.flame_height = 0
+        self._shutting_down = False
+        self._guard_flame_on = False
+        self._igniting = False
+        self._aux_on = False
+        self._light_on = False
+        self._dim_level = 0
+        self._ambient_temperature = None
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(3)
         self.client.connect((self.ip, 2000))
@@ -55,6 +64,10 @@ class Mertik:
     @property
     def is_igniting(self) -> bool:
         return self._igniting
+
+    @property
+    def is_guard_flame_on(self) -> bool:
+        return self._guard_flame_on
 
     @property
     def ambient_temperature(self) -> float:
@@ -129,7 +142,9 @@ class Mertik:
         self.refresh_status()
 
     def __hex_to_bin(self, hex_val):
-        return format(int(hex_val, 16), "b").zfill(8)
+        # Pad to the full width of the field (4 hex chars = 16 bits), so a bit
+        # keeps its index when the leading bits of the status word are 0.
+        return format(int(hex_val, 16), "b").zfill(len(hex_val) * 4)
 
     def __from_bit_status(self, hex_val, index):
         return self.__hex_to_bin(hex_val)[index : index + 1] == "1"
@@ -163,22 +178,25 @@ class Mertik:
             self.__process_status(temp_data)
 
     def __process_status(self, status_str):
-        temp_sub = "0x" + status_str[14:16]
-        flame_height = int(temp_sub, 0)
-
-        if flame_height <= 123:
-            self.flame_height = 0
-            self.on = False
-        else:
-            self.flame_height = round(((flame_height - 128) / 128) * 12) + 1
-            self.on = True
-
         status_bits = status_str[16:20]
         self._shutting_down = self.__from_bit_status(status_bits, 7)
         self._guard_flame_on = self.__from_bit_status(status_bits, 8)
         self._igniting = self.__from_bit_status(status_bits, 11)
         self._aux_on = self.__from_bit_status(status_bits, 12)
         self._light_on = self.__from_bit_status(status_bits, 13)
+
+        temp_sub = "0x" + status_str[14:16]
+        flame_height = int(temp_sub, 0)
+
+        # With the guard (pilot) flame out, the module reports 0xFF as flame
+        # height, so a high value alone does not mean the fire burns. A burning
+        # fire always has its guard flame on, or is still igniting.
+        if flame_height <= 123 or not (self._guard_flame_on or self._igniting):
+            self.flame_height = 0
+            self.on = False
+        else:
+            self.flame_height = min(round(((flame_height - 128) / 128) * 12) + 1, 12)
+            self.on = True
 
         self._dim_level = (int("0x" + status_str[20:22], 0) - 100) / 151
         if self._dim_level < 0 or not self._light_on:

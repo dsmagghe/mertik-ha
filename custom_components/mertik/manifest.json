@@ -1,11 +1,13 @@
 {
-  "codeowners": ["@djerik"],
+  "codeowners": [
+    "@dsmagghe"
+  ],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/djerik/mertik-ha",
-  "issue_tracker": "https://github.com/djerik/mertik-ha/issues",
+  "documentation": "https://github.com/dsmagghe/mertik-ha",
+  "issue_tracker": "https://github.com/dsmagghe/mertik-ha/issues",
   "domain": "mertik",
   "name": "Mertik Maxitrol",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "iot_class": "local_polling"
 }
