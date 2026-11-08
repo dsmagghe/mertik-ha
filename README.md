@@ -81,9 +81,12 @@ sequence:
 
 ## Switching from djerik/mertik-ha
 
-The domain and unique IDs are the same, so your config entry, entity IDs and automations stay as they are. After the restart the three binary sensors and the device appear.
+The domain and unique IDs are the same, so your config entry, entity IDs and automations stay as they are. After a restart the three binary sensors and the device appear.
 
-If you install through HACS / the Marketplace, **remove `djerik/mertik-ha` from it** (or never update it again). Both repositories install into `custom_components/mertik`, so updating the original would overwrite this fork.
+Both repositories install into `custom_components/mertik`, and HACS / the Home Assistant Marketplace treats that folder as owned by the repository that installed it. It refuses to install this fork over it ("The mertik directory belongs to djerik/mertik-ha") and only uninstalls the original once the integration's setup is removed, which also deletes its devices and entities. Two ways to switch:
+
+1. **Keep your setup (no re-configuration).** Copy `custom_components/mertik` from this repository's latest release over the existing folder, restart Home Assistant, then disable the update entity of `djerik/mertik-ha` (Settings → Entities, e.g. `update.mertik_maxitrol_update`) so an "update all" cannot put the original back. Updates of this fork are then installed the same way.
+2. **Let HACS / the Marketplace manage this fork.** Write down your entity IDs, delete the Mertik integration, uninstall `djerik/mertik-ha`, add `https://github.com/dsmagghe/mertik-ha` as a custom repository, install it, restart, set up the fireplace again and rename the entities back to your old IDs.
 
 ## Development
 
