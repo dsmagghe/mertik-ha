@@ -1,12 +1,14 @@
 """Mertik data update coordinator."""
 
 import logging
+import time
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from .discovery import async_find_moved_host
 from .mertik import Mertik
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,6 +27,7 @@ class MertikDataCoordinator(DataUpdateCoordinator[None]):
             config_entry=config_entry,
         )
         self.mertik = mertik
+        self._last_search = 0.0
 
     @property
     def is_on(self) -> bool:
@@ -96,4 +99,25 @@ class MertikDataCoordinator(DataUpdateCoordinator[None]):
 
     async def _async_update_data(self):
         """Fetch data from the fireplace device."""
-        await self.hass.async_add_executor_job(self.mertik.refresh_status)
+        try:
+            await self.hass.async_add_executor_job(self.mertik.refresh_status)
+        except OSError as err:
+            await self._async_follow_moved_module()
+            raise UpdateFailed(
+                f"Cannot reach the Mertik module at {self.mertik.ip}: {err}"
+            ) from err
+
+    async def _async_follow_moved_module(self) -> None:
+        """If the module answers on another IP address, switch to it (at most every 5 min)."""
+        now = time.monotonic()
+        if now - self._last_search < 300:
+            return
+        self._last_search = now
+        new_host = await async_find_moved_host(self.hass, self.config_entry)
+        if new_host is None:
+            return
+        _LOGGER.warning("Mertik module moved from %s to %s", self.mertik.ip, new_host)
+        self.hass.config_entries.async_update_entry(
+            self.config_entry, data={**self.config_entry.data, "host": new_host}
+        )
+        self.hass.config_entries.async_schedule_reload(self.config_entry.entry_id)
