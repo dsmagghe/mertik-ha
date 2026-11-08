@@ -1,13 +1,16 @@
 {
+  "domain": "mertik",
+  "name": "Mertik Maxitrol",
+  "categories": [
+    "climate.thermostats_heating"
+  ],
   "codeowners": [
     "@dsmagghe"
   ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/dsmagghe/mertik-ha",
+  "iot_class": "local_polling",
   "issue_tracker": "https://github.com/dsmagghe/mertik-ha/issues",
-  "domain": "mertik",
-  "name": "Mertik Maxitrol",
-  "version": "1.2.0",
-  "iot_class": "local_polling"
+  "version": "1.2.1"
 }
