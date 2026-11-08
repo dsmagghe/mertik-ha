@@ -16,6 +16,7 @@ Use at your own risk: this talks to a gas appliance. The integration only sends 
 - **No more "burning at height 13" while the fire is out.** With the guard (pilot) flame out, the module reports the maximum flame value (`FF`), which the original read as a burning fire. A fire now only counts as on when its guard flame burns or it is igniting, and the flame height never exceeds 12.
 - **Correct status bits when the leading bit of the status word is 0.** The status word is 16 bits, but it was padded to 8, which shifted every bit when the first one was not set. All existing behaviour is unchanged when that leading bit is set.
 - **Safe defaults** before the first status arrives, instead of an `AttributeError`.
+- **Stale devices can be deleted.** Earlier versions created their devices under the IP address of the module; after an update or an IP change those stay behind, unavailable. Delete them from their device page (the current device stays protected).
 - A Dutch translation of the setup dialog.
 - Unit tests for the status parsing.
 
@@ -100,6 +101,7 @@ python3 -m unittest discover -s tests -v
 
 ## Changelog
 
+- 2026-11-08 **1.1.1** (fork): stale devices left by earlier versions (or an IP change) can be deleted from the device page.
 - 2026-11-08 **1.1.0** (fork): binary sensors for igniting, shutting down and guard flame; one device per fireplace; the fire is off when the guard flame is out (no more height 13 on a cold fireplace); flame height capped at 12; 16-bit status parsing; defaults before the first status; Dutch translation; tests.
 - 2026-02-24 1.0.0 (upstream): bug fixes for breaking Home Assistant changes.
 - 2023-01-15 Initial version (upstream).
