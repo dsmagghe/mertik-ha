@@ -6,6 +6,7 @@ import socket
 from homeassistant import config_entries, core
 from homeassistant.const import CONF_HOST
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
@@ -14,6 +15,8 @@ from .mertik import Mertik
 from .mertikdatacoordinator import MertikDataCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS = ["binary_sensor", "light", "number", "sensor", "switch"]
 

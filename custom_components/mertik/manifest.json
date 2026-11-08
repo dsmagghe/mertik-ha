@@ -1,6 +1,9 @@
 {
   "domain": "mertik",
   "name": "Mertik Maxitrol",
+  "categories": [
+    "climate.thermostats_heating"
+  ],
   "codeowners": [
     "@dsmagghe"
   ],
