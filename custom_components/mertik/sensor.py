@@ -2,7 +2,7 @@
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import CONF_HOST, EntityCategory, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -25,7 +25,10 @@ async def async_setup_entry(
         [
             MertikAmbientTemperatureSensorEntity(
                 dataservice, entry.entry_id, entry.data["name"], device_info
-            )
+            ),
+            MertikIpAddressSensorEntity(
+                entry.entry_id, entry.data["name"], entry.data[CONF_HOST], device_info
+            ),
         ]
     )
 
@@ -56,3 +59,20 @@ class MertikAmbientTemperatureSensorEntity(
     def native_value(self) -> float:
         """Return the current ambient temperature."""
         return self._dataservice.ambient_temperature
+
+
+class MertikIpAddressSensorEntity(SensorEntity):
+    """The IP address Home Assistant uses for the module (change it via Reconfigure)."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_icon = "mdi:ip-network"
+    _attr_should_poll = False
+
+    def __init__(
+        self, entry_id: str, name: str, host: str, device_info: DeviceInfo
+    ) -> None:
+        """Initialize the IP address sensor."""
+        self._attr_name = name + " IP Address"
+        self._attr_unique_id = entry_id + "-IpAddress"
+        self._attr_native_value = host
+        self._attr_device_info = device_info

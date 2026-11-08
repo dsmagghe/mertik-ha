@@ -2,13 +2,28 @@
   "config": {
     "step": {
       "user": {
+        "title": "Mertik Maxitrol-haard",
+        "description": "Gevonden op je netwerk: {found}\n\nKies een module of typ het IP-adres van de wifimodule. Geef de module een vast IP-adres in je router.",
         "data": {
           "name": "Naam van de haard",
           "host": "IP-adres van de wifimodule"
-        },
-        "description": "Geef de haard een naam en vul het IP-adres van de Mertik-wifimodule in.",
-        "title": "Mertik Maxitrol-haard"
+        }
+      },
+      "reconfigure": {
+        "title": "IP-adres van de haard",
+        "description": "Huidig IP-adres: {current}\nGevonden op je netwerk: {found}\n\nKies de module of typ het IP-adres.",
+        "data": {
+          "host": "IP-adres van de wifimodule"
+        }
       }
+    },
+    "error": {
+      "cannot_connect": "Op dit IP-adres antwoordt geen Mertik-module (TCP-poort 2000).",
+      "wrong_device": "Dit is een andere Mertik-module dan de module die hier ingesteld is."
+    },
+    "abort": {
+      "already_configured": "Deze haard is al ingesteld.",
+      "reconfigure_successful": "Het IP-adres is aangepast."
     }
   }
 }

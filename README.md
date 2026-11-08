@@ -17,6 +17,7 @@ Use at your own risk: this talks to a gas appliance. The integration only sends 
 - **Correct status bits when the leading bit of the status word is 0.** The status word is 16 bits, but it was padded to 8, which shifted every bit when the first one was not set. All existing behaviour is unchanged when that leading bit is set.
 - **Safe defaults** before the first status arrives, instead of an `AttributeError`.
 - **Stale devices can be deleted.** Earlier versions created their devices under the IP address of the module; after an update or an IP change those stay behind, unavailable. Delete them from their device page (the current device stays protected).
+- **Finds the module on your network**, shows and changes its IP address (Reconfigure), and follows the module when it gets a new IP address. See [IP address](#ip-address-see-it-change-it-or-let-it-follow).
 - A Dutch translation of the setup dialog.
 - Unit tests for the status parsing.
 
@@ -39,10 +40,18 @@ Copy the folder `custom_components/mertik` from this repository into the `custom
 
 ## Setup
 
-**Settings → Devices & services → Add integration → Mertik Maxitrol**, then enter:
+**Settings → Devices & services → Add integration → Mertik Maxitrol.** The integration searches your network for Mertik WiFi modules first. Then:
 
-- a **name** for the fireplace (it becomes the start of every entity name), and
-- the **IP address** of the WiFi module.
+- give the fireplace a **name** (it becomes the start of every entity name), and
+- pick the module from the list, or type its **IP address** if it was not found (for example when it sits in another subnet or VLAN).
+
+## IP address: see it, change it, or let it follow
+
+- **See it:** the device page shows the module's IP address (diagnostic sensor *IP Address*) and its MAC address.
+- **Change it:** Settings → Devices & services → Mertik Maxitrol → the menu (three dots) of the fireplace → **Reconfigure**. It shows the current address and the modules found on the network; pick one or type an address. The connection is tested before it is saved.
+- **Automatic:** the integration remembers the module's MAC address. If the module stops answering (for example after it got a new address from your router), it searches the network and switches to the module's new IP address on its own, at most once every 5 minutes. A fixed IP address in your router remains the better solution.
+
+Discovery uses a UDP broadcast to port 30718; the module answers on port 30719. Both must be reachable from Home Assistant, which is the case on a normal home network.
 
 ## Entities
 
@@ -101,6 +110,7 @@ python3 -m unittest discover -s tests -v
 
 ## Changelog
 
+- 2026-11-08 **1.2.0** (fork): network search when adding a fireplace; Reconfigure to see and change the IP address; follows the module to a new IP address by its MAC address; IP address sensor and MAC address on the device page. Requires Home Assistant 2024.11 or later.
 - 2026-11-08 **1.1.1** (fork): stale devices left by earlier versions (or an IP change) can be deleted from the device page.
 - 2026-11-08 **1.1.0** (fork): binary sensors for igniting, shutting down and guard flame; one device per fireplace; the fire is off when the guard flame is out (no more height 13 on a cold fireplace); flame height capped at 12; 16-bit status parsing; defaults before the first status; Dutch translation; tests.
 - 2026-02-24 1.0.0 (upstream): bug fixes for breaking Home Assistant changes.

@@ -2,13 +2,28 @@
   "config": {
     "step": {
       "user": {
+        "title": "Mertik Maxitrol fireplace",
+        "description": "Modules found on your network: {found}\n\nPick a module or type the IP address of the WiFi module. Give the module a fixed IP address in your router.",
         "data": {
-          "name": "Assign name to the fireplace",
-          "host": "IP address of the fireplace controller"
-        },
-        "description": "Choose device.",
-        "title": "Devices"
+          "name": "Name of the fireplace",
+          "host": "IP address of the WiFi module"
+        }
+      },
+      "reconfigure": {
+        "title": "IP address of the fireplace",
+        "description": "Current IP address: {current}\nModules found on your network: {found}\n\nPick the module or type its IP address.",
+        "data": {
+          "host": "IP address of the WiFi module"
+        }
       }
+    },
+    "error": {
+      "cannot_connect": "No Mertik module answers on this IP address (TCP port 2000).",
+      "wrong_device": "This is a different Mertik module than the one set up here."
+    },
+    "abort": {
+      "already_configured": "This fireplace is already set up.",
+      "reconfigure_successful": "The IP address has been updated."
     }
   }
 }
