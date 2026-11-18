@@ -2,7 +2,9 @@
 
 Control a gas fireplace with a **Mertik Maxitrol WiFi module** from Home Assistant, locally, without any cloud.
 
-This is a maintained fork of [djerik/mertik-ha](https://github.com/djerik/mertik-ha), with all credit for the protocol work going to the original author. The fork adds the fireplace's status sensors and groups everything under one device. It also keeps the integration domain (`mertik`) and the unique IDs, so an existing installation switches over without losing entities or automations.
+This is a maintained fork of [djerik/mertik-ha](https://github.com/djerik/mertik-ha), with all credit for the protocol work going to the original author. The fork adds the fireplace's status sensors and groups everything under one device.
+
+Since version 2.0.0 the integration has its own domain, `mertik_maxitrol` (it used `mertik` before, like the original). It installs into `custom_components/mertik_maxitrol`, so it no longer collides with other Mertik integrations in HACS. Coming from djerik/mertik-ha or from version 1.x of this fork? See [Migrating from the `mertik` domain](#migrating-from-the-mertik-domain).
 
 Use at your own risk: this talks to a gas appliance. The integration only sends the same commands the Mertik app sends, but you remain responsible for safe use.
 
@@ -36,7 +38,7 @@ Use at your own risk: this talks to a gas appliance. The integration only sends 
 
 ### Manually
 
-Copy the folder `custom_components/mertik` from this repository into the `custom_components` folder of your Home Assistant configuration, then restart Home Assistant.
+Copy the folder `custom_components/mertik_maxitrol` from this repository into the `custom_components` folder of your Home Assistant configuration, then restart Home Assistant.
 
 ## Setup
 
@@ -89,14 +91,15 @@ sequence:
       value: 6
 ```
 
-## Switching from djerik/mertik-ha
+## Migrating from the `mertik` domain
 
-The domain and unique IDs are the same, so your config entry, entity IDs and automations stay as they are. After a restart the three binary sensors and the device appear.
+Version 2.0.0 moved from the domain `mertik` to `mertik_maxitrol`. That applies to people coming from [djerik/mertik-ha](https://github.com/djerik/mertik-ha) and to users of version 1.x of this fork. Home Assistant sees it as a different integration: your config entry, device and entities are **not** taken over, they are created again under the new domain. Your automations keep working once the new entities have the old entity IDs:
 
-Both repositories install into `custom_components/mertik`, and HACS / the Home Assistant Marketplace treats that folder as owned by the repository that installed it. It refuses to install this fork over it ("The mertik directory belongs to djerik/mertik-ha") and only uninstalls the original once the integration's setup is removed, which also deletes its devices and entities. Two ways to switch:
-
-1. **Keep your setup (no re-configuration).** Copy `custom_components/mertik` from this repository's latest release over the existing folder, restart Home Assistant, then disable the update entity of `djerik/mertik-ha` (Settings → Entities, e.g. `update.mertik_maxitrol_update`) so an "update all" cannot put the original back. Updates of this fork are then installed the same way.
-2. **Let HACS / the Marketplace manage this fork.** Write down your entity IDs, delete the Mertik integration, uninstall `djerik/mertik-ha`, add `https://github.com/dsmagghe/mertik-ha` as a custom repository, install it, restart, set up the fireplace again and rename the entities back to your old IDs.
+1. Write down the entity IDs of your fireplace (Settings → Entities, search for the fireplace).
+2. Delete the fireplace from the old Mertik integration (Settings → Devices & services → Mertik → the menu of the fireplace → **Delete**). Do this first: the WiFi module may not accept two connections at the same time, and the old entity IDs become free.
+3. Uninstall the old repository in HACS / the Marketplace (djerik/mertik-ha, or this fork from before 2.0.0), or remove the folder `custom_components/mertik`, and restart Home Assistant.
+4. Install this repository (see [Installation](#installation)), restart, and set up the fireplace again (see [Setup](#setup)).
+5. If an entity ID differs from what you wrote down, rename it back (entity → settings → **Entity ID**). Automations, scripts and dashboards then work as before.
 
 ## Development
 
