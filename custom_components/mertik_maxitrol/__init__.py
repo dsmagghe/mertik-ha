@@ -54,7 +54,7 @@ async def async_setup_entry(
 
     if entry.unique_id is None:
         entry.async_create_background_task(
-            hass, _async_learn_mac(hass, entry), "mertik_learn_mac"
+            hass, _async_learn_mac(hass, entry), f"{DOMAIN}_learn_mac"
         )
 
     return True

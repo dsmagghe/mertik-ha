@@ -1,5 +1,5 @@
 {
-  "domain": "mertik",
+  "domain": "mertik_maxitrol",
   "name": "Mertik Maxitrol",
   "categories": [
     "climate.thermostats_heating"
@@ -12,5 +12,5 @@
   "documentation": "https://github.com/dsmagghe/mertik-ha",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/dsmagghe/mertik-ha/issues",
-  "version": "1.2.1"
+  "version": "2.0.0"
 }

@@ -5,7 +5,7 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "custom_components", "mertik"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "custom_components", "mertik_maxitrol"))
 
 from mertik import Mertik  # noqa: E402
 
