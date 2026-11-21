@@ -32,9 +32,14 @@ Use at your own risk: this talks to a gas appliance. The integration only sends 
 
 ### Through HACS / the Home Assistant Marketplace (recommended)
 
-1. Open HACS (in recent Home Assistant versions: the Marketplace).
-2. Open the menu (three dots), choose **Custom repositories**, add `https://github.com/dsmagghe/mertik-ha` with category **Integration**.
-3. Search for **Mertik Maxitrol**, download it, and restart Home Assistant.
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=dsmagghe&repository=mertik-ha&category=integration)
+
+1. Open HACS (in recent Home Assistant versions: the Marketplace) and search for **Mertik Maxitrol**. Pick the one from **dsmagghe/mertik-ha**: another Mertik integration, "Mertik Maxitrol Fireplace", is listed as well.
+2. Download it and restart Home Assistant.
+
+The button above does the same in one click: it opens this repository in HACS on your own Home Assistant.
+
+> If your HACS does not list it, add it as a custom repository: menu (three dots) → **Custom repositories** → `https://github.com/dsmagghe/mertik-ha`, category **Integration**. Then search for it as above.
 
 ### Manually
 
